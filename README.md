@@ -1,16 +1,10 @@
-# prego
+# Prego
 
-A new Flutter project.
+Pregnancy Test right on your phone! 
 
-## Getting Started
+This revolutionary app utilizes the extraordinary technologies of your phone and gives you definite proof of your pregnancy.
+Unlike traditional pregnancy testing methods that can be invasive or slow, Prego gives you results **within the next day** of an accident. 
+Just like any normal pee test, just open prego, start the data collection system, and pee on your phone. Prego should give you back results in
+as little as 30 seconds so you can be better prepared for your future.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+*This does not replace a doctor*
