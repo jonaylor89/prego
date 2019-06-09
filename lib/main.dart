@@ -76,6 +76,53 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _stopDataCollection() {
+    setState(() {
+      sw.stop();
+      isCollecting = false;
+      isThinking = true;
+    });
+  }
+
+  void _onLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      child: new Dialog(
+        child: new Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            new CircularProgressIndicator(),
+            new Text("Loading"),
+          ],
+        ),
+      ),
+    );
+    new Future.delayed(new Duration(seconds: 3), () {
+      Navigator.pop(context); //pop dialog
+    });
+  }
+
+  void _showResults() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Results'),
+            content: const Text('Here are your results'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  sw.reset();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -127,24 +174,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   splashColor: Colors.blueGrey,
                   onPressed: () {
                     // Stop data collection
+                    _stopDataCollection();
+
+                    // Loading message while thinking
+                    _onLoading();
+
                     // show dialog of the "results"
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Results'),
-                            content: const Text('Here are your results'),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('Ok'),
-                                onPressed: () {
-                                  sw.reset();
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        });
+                    _showResults();
                   }),
             ]),
       ),
