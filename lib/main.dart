@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Prego Home Page'),
+      home: MyHomePage(title: 'Prego'),
     );
   }
 }
@@ -48,23 +48,40 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  int sleepTime = 1000;
+  int sleepTime = 10000; // Time to think in milliseconds
+  int percentageOfPregnancy = 75;
   bool isPregnant = false;
   bool thinking = false;
-  Random rng = new Random();
+  final rng = new Random();
 
-  void _checkPregnancy() {
+  void _checkPregnancy() async {
 
     setState(() {
       thinking = true;
     });
 
-    sleep(new Duration(milliseconds: sleepTime));
+    await Future.delayed(new Duration(milliseconds: sleepTime));
 
     setState(() {
-      isPregnant = rng.nextInt(100) > 75;
+      isPregnant = rng.nextInt(100) > percentageOfPregnancy;
       thinking = false;
     });
+  }
+
+  List<Widget> _thinkingCondition() {
+    if (thinking) {
+      return <Widget>[Text('THINKING...')];
+    } else {
+      return <Widget>[
+        Text(
+          'Are you pregnant:',
+        ),
+        Text(
+          '$isPregnant',
+          style: Theme.of(context).textTheme.display1,
+        )
+      ];
+    }
   }
 
   @override
@@ -100,19 +117,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Are you pregnant:',
-            ),
-            Text(
-              '$isPregnant',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+          children: _thinkingCondition()
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _checkPregnancy,
+        onPressed: thinking ? null : _checkPregnancy,
         tooltip: 'Pregnancy Check',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
