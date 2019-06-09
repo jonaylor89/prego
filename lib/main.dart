@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'dart:io';
 
 void main() => runApp(MyApp());
 
@@ -41,47 +40,40 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   int sleepTime = 10000; // Time to think in milliseconds
-  int percentageOfPregnancy = 75;
-  bool isPregnant = false;
-  bool thinking = false;
+  int percentageOfPregnancy =
+      25; // Percentage of times it will say pregnant is true
+  bool isCollecting = false; // Are we collection data
+  bool isPregnant = false; // Is the result pregnant
+  bool isThinking = false; // Are we thinking for the result
+
+  Stopwatch sw = new Stopwatch();
+
   final rng = new Random();
 
   void _checkPregnancy() async {
-
     setState(() {
-      thinking = true;
+      isThinking = true;
     });
 
     await Future.delayed(new Duration(milliseconds: sleepTime));
 
     setState(() {
-      isPregnant = rng.nextInt(100) > percentageOfPregnancy;
-      thinking = false;
+      isPregnant = rng.nextInt(100) < percentageOfPregnancy;
+      isThinking = false;
     });
   }
 
-  List<Widget> _thinkingCondition() {
-    if (thinking) {
-      return <Widget>[Text('THINKING...')];
-    } else {
-      return <Widget>[
-        Text(
-          'Are you pregnant:',
-        ),
-        Text(
-          '$isPregnant',
-          style: Theme.of(context).textTheme.display1,
-        )
-      ];
-    }
+  void _startDataCollection() {
+    setState(() {
+      sw.start();
+      isCollecting = true;
+    });
   }
 
   @override
@@ -102,26 +94,63 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _thinkingCondition()
-        ),
+            // Column is also layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                child: const Text('Start'),
+                color: Theme.of(context).accentColor,
+                elevation: 4.0,
+                splashColor: Colors.blueGrey,
+                onPressed: () {
+                  // Start timer and "data collection"
+                  _startDataCollection();
+                },
+              ),
+              RaisedButton(
+                  child: const Text('Stop'),
+                  color: Theme.of(context).accentColor,
+                  elevation: 4.0,
+                  splashColor: Colors.blueGrey,
+                  onPressed: () {
+                    // Stop data collection
+                    // show dialog of the "results"
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Results'),
+                            content: const Text('Here are your results'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Ok'),
+                                onPressed: () {
+                                  sw.reset();
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  }),
+            ]),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: thinking ? null : _checkPregnancy,
+        // TODO: This button can be a help button???
+        onPressed: null,
         tooltip: 'Pregnancy Check',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
