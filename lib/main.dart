@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:progress_indicators/progress_indicators.dart';
 import 'dart:math';
 
 void main() => runApp(MyApp());
@@ -48,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int sleepTime = 10000; // Time to think in milliseconds
   int percentageOfPregnancy =
       25; // Percentage of times it will say pregnant is true
-  bool isCollecting = false; // Are we collection data
   bool isPregnant = false; // Is the result pregnant
   bool isThinking = false; // Are we thinking for the result
 
@@ -56,51 +56,40 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final rng = new Random();
 
-  void _checkPregnancy() async {
-    setState(() {
-      isThinking = true;
-    });
-
-    await Future.delayed(new Duration(milliseconds: sleepTime));
-
-    setState(() {
-      isPregnant = rng.nextInt(100) < percentageOfPregnancy;
-      isThinking = false;
-    });
-  }
-
   void _startDataCollection() {
     setState(() {
       sw.start();
-      isCollecting = true;
     });
   }
 
   void _stopDataCollection() {
     setState(() {
       sw.stop();
-      isCollecting = false;
       isThinking = true;
     });
   }
 
-  void _onLoading() {
+  void _onLoading() async {
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      child: new Dialog(
-        child: new Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            new CircularProgressIndicator(),
-            new Text("Loading"),
-          ],
-        ),
-      ),
-    );
-    new Future.delayed(new Duration(seconds: 3), () {
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return new Dialog(
+            child: new Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                new CircularProgressIndicator(),
+                new Text("Loading"),
+              ],
+            ),
+          );
+        },
+      );
+
+    await Future.delayed(new Duration(milliseconds: sleepTime), () {
       Navigator.pop(context); //pop dialog
     });
+
   }
 
   void _showResults() {
@@ -173,14 +162,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   elevation: 4.0,
                   splashColor: Colors.blueGrey,
                   onPressed: () {
-                    // Stop data collection
-                    _stopDataCollection();
+                    if (sw.isRunning) {
+                      // Stop data collection
+                      _stopDataCollection();
 
-                    // Loading message while thinking
-                    _onLoading();
+                      // Loading message while thinking
+                      _onLoading();
 
-                    // show dialog of the "results"
-                    _showResults();
+                      // show dialog of the "results"
+                      _showResults();
+                    }
                   }),
             ]),
       ),
