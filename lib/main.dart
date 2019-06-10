@@ -46,7 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int sleepTime = 10000; // Time to think in milliseconds
+  int sleepTime = 3000; // Time to think in milliseconds
   int percentageOfPregnancy =
       25; // Percentage of times it will say pregnant is true
   int numberOfChildren = 0;
@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 Text('Pregnant: $isPregnant'),
                 Text('Number of children: $numberOfChildren'),
-                Text('Total time for data collection: $sw.elapsed')
+                Text('Total time for data collection: $sw.elapsed.toString()')
               ],
             ),
             actions: <Widget>[
