@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:progress_indicators/progress_indicators.dart';
 import 'dart:math';
+import 'dart:async';
 
 void main() => runApp(MyApp());
 
@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int numberOfChildren = 0;
   bool isPregnant = false; // Is the result pregnant
   bool isThinking = false; // Are we thinking for the result
-  
+  int timerText = 0;
 
   Stopwatch sw = new Stopwatch();
 
@@ -62,6 +62,17 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       sw.start();
     });
+
+    Timer _timer;
+    _timer = new Timer.periodic(
+        Duration(milliseconds: 100),
+        (Timer timer) => setState(() {
+              if (!sw.isRunning) {
+                _timer.cancel();
+              } else {
+                timerText = timerText + 100;
+              }
+            }));
   }
 
   void _stopDataCollection() {
@@ -71,21 +82,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Text startStopButtonText() {
+    return sw.isRunning ? Text('Stop') : Text('Start');
+  }
+
   Future<Duration> _onLoading() async {
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return new Dialog(
-            child: new Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                new CircularProgressIndicator(),
-                new Text("Crunching Numbers"),
-              ],
-            ),
-          );
-        },
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return new Dialog(
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              new CircularProgressIndicator(),
+              new Text("Crunching Numbers"),
+            ],
+          ),
+        );
+      },
     );
 
     // Determine if pregnant
@@ -99,7 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return await Future.delayed(new Duration(milliseconds: sleepTime), () {
       Navigator.pop(context); //pop dialog
     });
-
   }
 
   void _showResults() {
@@ -112,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 Text('Pregnant: $isPregnant'),
                 Text('Number of children: $numberOfChildren'),
+                Text('Total time for data collection: $sw.elapsed')
               ],
             ),
             actions: <Widget>[
@@ -125,6 +140,22 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           );
         });
+  }
+
+  void toggleDataCollection() async {
+    if (sw.isRunning) {
+      // Stop data collection
+      _stopDataCollection();
+
+      // Loading message while thinking
+      await _onLoading();
+
+      // show dialog of the "results"
+      _showResults();
+    } else {
+      // Start timer and "data collection"
+      _startDataCollection();
+    }
   }
 
   @override
@@ -161,33 +192,16 @@ class _MyHomePageState extends State<MyHomePage> {
             // horizontal).
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Text(Duration(milliseconds: timerText).toString()),
               RaisedButton(
-                child: const Text('Start'),
+                child: startStopButtonText(),
                 color: Theme.of(context).accentColor,
                 elevation: 4.0,
                 splashColor: Colors.blueGrey,
                 onPressed: () {
-                  // Start timer and "data collection"
-                  _startDataCollection();
+                  toggleDataCollection();
                 },
               ),
-              RaisedButton(
-                  child: const Text('Stop'),
-                  color: Theme.of(context).accentColor,
-                  elevation: 4.0,
-                  splashColor: Colors.blueGrey,
-                  onPressed: () async {
-                    if (sw.isRunning) {
-                      // Stop data collection
-                      _stopDataCollection();
-
-                      // Loading message while thinking
-                      await _onLoading();
-
-                      // show dialog of the "results"
-                      _showResults();
-                    }
-                  }),
             ]),
       ),
       floatingActionButton: FloatingActionButton(
