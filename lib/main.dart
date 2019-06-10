@@ -49,8 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int sleepTime = 10000; // Time to think in milliseconds
   int percentageOfPregnancy =
       25; // Percentage of times it will say pregnant is true
+  int numberOfChildren = 0;
   bool isPregnant = false; // Is the result pregnant
   bool isThinking = false; // Are we thinking for the result
+  
 
   Stopwatch sw = new Stopwatch();
 
@@ -69,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _onLoading() async {
+  Future<Duration> _onLoading() async {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -79,14 +81,22 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 new CircularProgressIndicator(),
-                new Text("Loading"),
+                new Text("Crunching Numbers"),
               ],
             ),
           );
         },
-      );
+    );
 
-    await Future.delayed(new Duration(milliseconds: sleepTime), () {
+    // Determine if pregnant
+    isPregnant = rng.nextInt(100) > percentageOfPregnancy;
+
+    if (isPregnant) {
+      // Determine number of children
+      numberOfChildren = rng.nextInt(10) + 1;
+    }
+
+    return await Future.delayed(new Duration(milliseconds: sleepTime), () {
       Navigator.pop(context); //pop dialog
     });
 
@@ -98,7 +108,12 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Results'),
-            content: const Text('Here are your results'),
+            content: Column(
+              children: <Widget>[
+                Text('Pregnant: $isPregnant'),
+                Text('Number of children: $numberOfChildren'),
+              ],
+            ),
             actions: <Widget>[
               FlatButton(
                 child: Text('Ok'),
@@ -161,13 +176,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Theme.of(context).accentColor,
                   elevation: 4.0,
                   splashColor: Colors.blueGrey,
-                  onPressed: () {
+                  onPressed: () async {
                     if (sw.isRunning) {
                       // Stop data collection
                       _stopDataCollection();
 
                       // Loading message while thinking
-                      _onLoading();
+                      await _onLoading();
 
                       // show dialog of the "results"
                       _showResults();
