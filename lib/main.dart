@@ -150,6 +150,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // Loading message while thinking
       await _onLoading();
 
+      sw.reset();
+
       // show dialog of the "results"
       _showResults();
     } else {
