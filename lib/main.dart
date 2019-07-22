@@ -116,21 +116,43 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void toggleDataCollection() async {
+    if (sw.isRunning) {
+      // Stop data collection
+      _stopDataCollection();
+
+      // Loading message while thinking
+      await _onLoading();
+
+      // show dialog of the "results"
+      _showResults();
+    } else {
+      // Start timer and "data collection"
+      _startDataCollection();
+    }
+  }
+
   void _showResults() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Results', textAlign: TextAlign.center,),
+            title: Text(
+              'Results',
+              textAlign: TextAlign.center,
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                    Text('Pregnant: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('$isPregnant'),
-                    Text('Number of children: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('$numberOfChildren'),
-                    Text('Total time for data collection: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('${sw.elapsed.toString()}')
+                Text('Pregnant: ',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('$isPregnant'),
+                Text('Number of children: ',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('$numberOfChildren'),
+                Text('Total time for data collection: ',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${sw.elapsed.toString()}')
               ],
             ),
             actions: <Widget>[
@@ -148,22 +170,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           );
         });
-  }
-
-  void toggleDataCollection() async {
-    if (sw.isRunning) {
-      // Stop data collection
-      _stopDataCollection();
-
-      // Loading message while thinking
-      await _onLoading();
-
-      // show dialog of the "results"
-      _showResults();
-    } else {
-      // Start timer and "data collection"
-      _startDataCollection();
-    }
   }
 
   @override
