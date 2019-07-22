@@ -123,10 +123,14 @@ class _MyHomePageState extends State<MyHomePage> {
           return AlertDialog(
             title: Text('Results'),
             content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text('Pregnant: $isPregnant'),
-                Text('Number of children: $numberOfChildren'),
-                Text('Total time for data collection: ${sw.elapsed.toString()}')
+                    Text('Pregnant: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('$isPregnant'),
+                    Text('Number of children: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('$numberOfChildren'),
+                    Text('Total time for data collection: '),
+                    Text('${sw.elapsed.toString()}', style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
             actions: <Widget>[
@@ -171,49 +175,42 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-            // Column is also layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(Duration(milliseconds: timerText).toString()),
-              RaisedButton(
-                child: startStopButtonText(),
-                color: Theme.of(context).accentColor,
-                elevation: 4.0,
-                splashColor: Colors.blueGrey,
-                onPressed: () {
-                  toggleDataCollection();
-                },
-              ),
-            ]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        // TODO: This button can be a help button???
-        onPressed: null,
-        tooltip: 'Pregnancy Check',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+        ),
+        body: Center(
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: Column(
+              // Column is also layout widget. It takes a list of children and
+              // arranges them vertically. By default, it sizes itself to fit its
+              // children horizontally, and tries to be as tall as its parent.
+              //
+              // Invoke "debug painting" (press "p" in the console, choose the
+              // "Toggle Debug Paint" action from the Flutter Inspector in Android
+              // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+              // to see the wireframe for each widget.
+              //
+              // Column has various properties to control how it sizes itself and
+              // how it positions its children. Here we use mainAxisAlignment to
+              // center the children vertically; the main axis here is the vertical
+              // axis because Columns are vertical (the cross axis would be
+              // horizontal).
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(Duration(milliseconds: timerText).toString()),
+                RaisedButton(
+                  child: startStopButtonText(),
+                  color: Theme.of(context).accentColor,
+                  elevation: 4.0,
+                  splashColor: Colors.blueGrey,
+                  onPressed: () {
+                    toggleDataCollection();
+                  },
+                ),
+              ]),
+        ));
   }
 }
