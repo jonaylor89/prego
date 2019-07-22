@@ -126,14 +126,18 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 Text('Pregnant: $isPregnant'),
                 Text('Number of children: $numberOfChildren'),
-                Text('Total time for data collection: $sw.elapsed.toString()')
+                Text('Total time for data collection: ${sw.elapsed.toString()}')
               ],
             ),
             actions: <Widget>[
               FlatButton(
                 child: Text('Ok'),
                 onPressed: () {
+                  // Reset the stopwatch for another go
                   sw.reset();
+                  timerText = 0;
+
+                  // Go back to start again
                   Navigator.of(context).pop();
                 },
               ),
@@ -149,8 +153,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // Loading message while thinking
       await _onLoading();
-
-      sw.reset();
 
       // show dialog of the "results"
       _showResults();
