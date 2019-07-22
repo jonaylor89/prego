@@ -121,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Results'),
+            title: Text('Results', textAlign: TextAlign.center,),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -129,8 +129,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text('$isPregnant'),
                     Text('Number of children: ', style: TextStyle(fontWeight: FontWeight.bold)),
                     Text('$numberOfChildren'),
-                    Text('Total time for data collection: '),
-                    Text('${sw.elapsed.toString()}', style: TextStyle(fontWeight: FontWeight.bold))
+                    Text('Total time for data collection: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('${sw.elapsed.toString()}')
               ],
             ),
             actions: <Widget>[
