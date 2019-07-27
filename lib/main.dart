@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -8,22 +11,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Prego',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Prego'),
-    );
+    return new DynamicTheme(
+        defaultBrightness: Brightness.light,
+        data: (brightness) => new ThemeData(
+              primarySwatch: Colors.blue,
+              brightness: brightness,
+            ),
+        themedWidgetBuilder: (context, theme) {
+          return MaterialApp(
+            title: 'Prego',
+            theme: theme,
+            home: MyHomePage(title: 'Prego'),
+          );
+        });
   }
 }
 
@@ -50,9 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
   int percentageOfPregnancy =
       25; // Percentage of times it will say pregnant is true
   int numberOfChildren = 0;
+  int timerText = 0;
+
   bool isPregnant = false; // Is the result pregnant
   bool isThinking = false; // Are we thinking for the result
-  int timerText = 0;
+  bool _switchValue = false;
 
   Stopwatch sw = new Stopwatch();
 
@@ -91,15 +93,20 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return new Dialog(
-          child: new Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              new CircularProgressIndicator(),
-              new Text("Crunching Numbers"),
-            ],
-          ),
-        );
+        return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            child: Container(
+                height: 75,
+                width: 100,
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    Padding(padding: EdgeInsets.all(10.0)),
+                    Text("Crunching Numbers")
+                  ],
+                )));
       },
     );
 
@@ -132,27 +139,56 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    String twoDigitMilli = twoDigits(duration.inMilliseconds.remainder(60));
+    return "$twoDigitMinutes:$twoDigitSeconds:$twoDigitMilli";
+  }
+
+  void _changeThemeInOpp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool darkMode = (prefs.getBool('darkMode') ?? true);
+    await prefs.setBool('darkMode', !darkMode);
+
+    if (darkMode) {
+      DynamicTheme.of(context).setBrightness(Brightness.dark);
+    } else {
+      DynamicTheme.of(context).setBrightness(Brightness.light);
+    }
+  }
+
   void _showResults() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(
-              'Results',
-              textAlign: TextAlign.center,
-            ),
+            title: Text('Results',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32.0))),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text('Pregnant: ',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('$isPregnant'),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                Text('$isPregnant', style: TextStyle(fontSize: 20)),
                 Text('Number of children: ',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('$numberOfChildren'),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                Text('$numberOfChildren', style: TextStyle(fontSize: 20)),
                 Text('Total time for data collection: ',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('${sw.elapsed.toString()}')
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                Text('${_formatDuration(sw.elapsed)}',
+                    style: TextStyle(fontSize: 20))
               ],
             ),
             actions: <Widget>[
@@ -181,42 +217,50 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-        appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
-        ),
-        body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: Column(
-              // Column is also layout widget. It takes a list of children and
-              // arranges them vertically. By default, it sizes itself to fit its
-              // children horizontally, and tries to be as tall as its parent.
-              //
-              // Invoke "debug painting" (press "p" in the console, choose the
-              // "Toggle Debug Paint" action from the Flutter Inspector in Android
-              // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-              // to see the wireframe for each widget.
-              //
-              // Column has various properties to control how it sizes itself and
-              // how it positions its children. Here we use mainAxisAlignment to
-              // center the children vertically; the main axis here is the vertical
-              // axis because Columns are vertical (the cross axis would be
-              // horizontal).
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(Duration(milliseconds: timerText).toString()),
-                RaisedButton(
-                  child: startStopButtonText(),
-                  color: Theme.of(context).accentColor,
-                  elevation: 4.0,
-                  splashColor: Colors.blueGrey,
-                  onPressed: () {
-                    toggleDataCollection();
-                  },
-                ),
-              ]),
-        ));
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: Column(
+            // Column is also layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(_formatDuration(Duration(milliseconds: timerText)),
+                  style: TextStyle(fontSize: 50)),
+              RaisedButton(
+                child: startStopButtonText(),
+                color: Theme.of(context).accentColor,
+                elevation: 4.0,
+                splashColor: Colors.blueGrey,
+                onPressed: () {
+                  toggleDataCollection();
+                },
+              ),
+            ]),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {_changeThemeInOpp()},
+        tooltip: 'Change theme',
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+    );
   }
 }
