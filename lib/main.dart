@@ -10,6 +10,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Dynamic Theme allows for dark to light mode
+    // transition during runtime
     return new DynamicTheme(
         defaultBrightness: Brightness.light,
         data: (brightness) => new ThemeData(
@@ -53,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool isPregnant = false; // Is the result pregnant
   bool isThinking = false; // Are we thinking for the result
-  bool _switchValue = false;
 
   Stopwatch sw = new Stopwatch();
 
@@ -152,9 +153,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return "$twoDigitMinutes:$twoDigitSeconds:$twoDigitMilli";
   }
 
-  void _changeThemeInOpp() async {
+  void _changeThemeInApp() async {
+    // Get dark mode preference from phone local storage
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // If setting isn't set then default to dark mode
     bool darkMode = (prefs.getBool('darkMode') ?? true);
+
+    // Save opposite setting to local storage
     await prefs.setBool('darkMode', !darkMode);
 
     if (darkMode) {
@@ -259,7 +265,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     gradient: LinearGradient(
                       colors: <Color>[
                         Color(0xFF6699FF),
-                        // Color(0xFF1976D2),
                         Color(0xFFFF99FF),
                       ],
                     ),
@@ -271,7 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ]),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {_changeThemeInOpp()},
+        onPressed: () => {_changeThemeInApp()},
         tooltip: 'Change Theme',
         child: Icon(Icons.add),
       ),
