@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -85,7 +84,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Text startStopButtonText() {
-    return sw.isRunning ? Text('Stop') : Text('Start');
+    return sw.isRunning
+        ? Text('Stop', style: TextStyle(fontSize: 40))
+        : Text('Start', style: TextStyle(fontSize: 40));
   }
 
   Future<Duration> _onLoading() async {
@@ -245,13 +246,27 @@ class _MyHomePageState extends State<MyHomePage> {
               Text(_formatDuration(Duration(milliseconds: timerText)),
                   style: TextStyle(fontSize: 50)),
               RaisedButton(
-                child: startStopButtonText(),
-                color: Theme.of(context).accentColor,
-                elevation: 4.0,
-                splashColor: Colors.blueGrey,
                 onPressed: () {
                   toggleDataCollection();
                 },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(32.0))),
+                textColor: Colors.white,
+                padding: const EdgeInsets.all(0.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        Color(0xFF0D47A1),
+                        Color(0xFF1976D2),
+                        Color(0xFF42A5F5),
+                      ],
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(10.0),
+                  child: startStopButtonText(),
+                ),
               ),
             ]),
       ),
