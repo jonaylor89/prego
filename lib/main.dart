@@ -250,7 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   toggleDataCollection();
                 },
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(32.0))),
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
                 textColor: Colors.white,
                 padding: const EdgeInsets.all(0.0),
                 child: Container(
@@ -258,9 +258,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     borderRadius: BorderRadius.all(Radius.circular(15.0)),
                     gradient: LinearGradient(
                       colors: <Color>[
-                        Color(0xFF0D47A1),
-                        Color(0xFF1976D2),
-                        Color(0xFF42A5F5),
+                        Color(0xFF6699FF),
+                        // Color(0xFF1976D2),
+                        Color(0xFFFF99FF),
                       ],
                     ),
                   ),
@@ -272,7 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {_changeThemeInOpp()},
-        tooltip: 'Change theme',
+        tooltip: 'Change Theme',
         child: Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
